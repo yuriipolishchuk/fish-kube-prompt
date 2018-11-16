@@ -53,5 +53,24 @@ function __kube_prompt
   end
 
   __kube_ps_update_cache
-  echo -n -s " (⎈ $__kube_ps_context|$__kube_ps_namespace)"
+
+  set_color blue
+  echo -n "⎈  "
+
+  if string match -q "prod*" $__kube_ps_context
+    set_color FF4500
+  end
+  echo -n -s "$__kube_ps_context"
+
+  set_color yellow
+  echo -n -s " | "
+
+  if string match -q "prod*" $__kube_ps_namespace
+    set_color red
+  else
+    set_color green
+  end
+
+  echo -s "$__kube_ps_namespace"
 end
+
