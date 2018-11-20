@@ -53,8 +53,7 @@ function __kube_prompt
   end
 
   __kube_ps_update_cache
-
-  set_color blue
+  set_color blue -b normal
   echo -n "⎈  "
 
   if string match -q "prod*" $__kube_ps_context
