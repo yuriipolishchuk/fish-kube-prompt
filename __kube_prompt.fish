@@ -25,26 +25,38 @@ function __kube_ps_update_cache
   if /bin/test -z "$kubeconfig"
     set kubeconfig "$HOME/.kube/config"
   end
+  __kube_ps_cache_context
+  __kube_ps_cache_namespace
 
-  if /bin/test "$kubeconfig" != "$__kube_ps_kubeconfig"
-    __kube_ps_cache_context
-    __kube_ps_cache_namespace
-    set -g __kube_ps_kubeconfig "$kubeconfig"
-    set -g __kube_ps_timestamp (date +%s)
-    return
+  # if /bin/test "$kubeconfig" != "$__kube_ps_kubeconfig"
+  #   __kube_ps_cache_context
+  #   __kube_ps_cache_namespace
+  #   set -g __kube_ps_kubeconfig "$kubeconfig"
+  #   set -g __kube_ps_timestamp (date +%s)
+  #   return
+  # end
+
+  # for conf in (string split ':' "$kubeconfig")
+  #   if /bin/test -r "$conf"
+  #     if /bin/test -z "$__kube_ps_timestamp"; or /bin/test (/usr/bin/stat -f '%m' "$conf") -lt "$__kube_ps_timestamp"
+  #       __kube_ps_cache_context
+  #       __kube_ps_cache_namespace
+  #       set -g __kube_ps_kubeconfig "$kubeconfig"
+  #       set -g __kube_ps_timestamp (date +%s)
+  #       return
+  #     end
+  #   end
+  # end
+end
+
+function __aws_profile_prompt
+  echo -n -s " | "
+
+  if string match -q "*prod" $AWS_PROFILE
+    set_color red
   end
 
-  for conf in (string split ':' "$kubeconfig")
-    if /bin/test -r "$conf"
-      if /bin/test -z "$__kube_ps_timestamp"; or /bin/test (/usr/bin/stat -f '%m' "$conf") -lt "$__kube_ps_timestamp"
-        __kube_ps_cache_context
-        __kube_ps_cache_namespace
-        set -g __kube_ps_kubeconfig "$kubeconfig"
-        set -g __kube_ps_timestamp (date +%s)
-        return
-      end
-    end
-  end
+  echo -s "AWS: $AWS_PROFILE"
 end
 
 function __kube_prompt
@@ -70,6 +82,8 @@ function __kube_prompt
     set_color green
   end
 
-  echo -s "$__kube_ps_namespace"
+  echo -ns "ns: $__kube_ps_namespace"
+
+  __aws_profile_prompt
 end
 
